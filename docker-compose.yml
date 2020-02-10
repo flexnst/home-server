@@ -1,0 +1,54 @@
+version: '3'
+services:
+
+  transmission:
+    image: gists/transmission
+    ports:
+      - "9091:9091"
+      - "51413:51413"
+    volumes:
+      - ./transmission:/data
+      - ./storage/Torrents:/data/downloads
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - USERNAME=transmission
+      - PASSWORD=transmission
+    restart: always
+
+  minidlna:
+    container_name: minidlna
+    hostname: minidlna
+    image: barbak/minidlna
+    restart: always
+    ports:
+      - "1900:1900/udp"
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - ./minidlna/default:/etc/default/minidlna
+      - ./minidlna/minidlna.conf:/srv/apps/minidlna/conf/minidlna.conf
+      - ./minidlna/var:/var
+      - ./storage:/media/storage:ro
+    environment:
+      - PUID=1000
+      - PGID=1000
+    network_mode: host
+
+  samba:
+    container_name: samba
+    hostname: samba
+    image: sixeyed/samba
+    ports:
+      - "139:139"
+      - "445:445"
+      - "137:137/udp"
+      - "138:138/udp"
+    volumes:
+      - ./storage:/mnt/storage
+    environment:
+      - USERID=1000
+      - GROUPID=1000
+      - TZ=Asia/Novosibirsk
+    command: samba.sh -s "Storage;/mnt/storage;yes;no;yes;all" #browseable="yes";ro="no";guest="yes";users="all"
+    restart: always
