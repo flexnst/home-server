@@ -1,6 +1,7 @@
 version: '3'
 services:
 
+  # https://emby.media/
   emby:
     image: emby/embyserver:latest
     restart: unless-stopped
