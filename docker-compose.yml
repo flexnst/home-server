@@ -11,7 +11,7 @@ services:
       - GID=1000
     volumes:
       - ./emby:/config
-      - ./storage:/mnt/storage
+      - ./storage:/media/storage:ro
     ports:
       - 8096:8096 # HTTP port
       - 8920:8920 # HTTPS port
